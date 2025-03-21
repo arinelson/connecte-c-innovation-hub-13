@@ -1,6 +1,7 @@
 
 import { Link } from 'react-router-dom';
 import { cn } from '@/lib/utils';
+import { forwardRef } from 'react';
 
 interface ArticleContentProps {
   content: string;
@@ -9,14 +10,14 @@ interface ArticleContentProps {
   tags: string[];
 }
 
-const ArticleContent: React.FC<ArticleContentProps> = ({
+const ArticleContent = forwardRef<HTMLDivElement, ArticleContentProps>(({
   content,
   imageUrl,
   title,
   tags
-}) => {
+}, ref) => {
   return (
-    <>
+    <div ref={ref}>
       {/* Featured Image */}
       <div className="mb-8 rounded-xl overflow-hidden">
         <img 
@@ -55,8 +56,10 @@ const ArticleContent: React.FC<ArticleContentProps> = ({
           ))}
         </div>
       </div>
-    </>
+    </div>
   );
-};
+});
+
+ArticleContent.displayName = "ArticleContent";
 
 export default ArticleContent;
