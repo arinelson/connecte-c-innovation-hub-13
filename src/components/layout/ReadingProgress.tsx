@@ -1,5 +1,6 @@
 
 import { useState, useEffect, useCallback } from 'react';
+import { Progress } from '@/components/ui/progress';
 
 interface ReadingProgressProps {
   target?: React.RefObject<HTMLElement>;
@@ -10,7 +11,6 @@ interface ReadingProgressProps {
 
 const ReadingProgress: React.FC<ReadingProgressProps> = ({ 
   target,
-  color = 'bg-conecte-600 dark:bg-conecte-500',
   height = 4,
   className = ''
 }) => {
@@ -49,10 +49,9 @@ const ReadingProgress: React.FC<ReadingProgressProps> = ({
       className={`fixed top-0 left-0 z-[100] w-full ${className}`}
       style={{ height: `${height}px` }}
     >
-      <div 
-        className={`h-full ${color}`}
-        style={{ width: `${readingProgress}%`, transition: 'width 0.2s ease' }}
-        aria-hidden="true"
+      <Progress 
+        value={readingProgress} 
+        className="h-full rounded-none bg-gray-200 dark:bg-gray-800"
       />
     </div>
   );
