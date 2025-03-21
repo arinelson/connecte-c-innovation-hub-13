@@ -2,14 +2,10 @@
 import React from 'react';
 import { Play } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { WebStory } from '@/types/webstories';
 
 type WebStoryCardProps = {
-  story: {
-    id: string;
-    title: string;
-    coverImage: string;
-    date: string;
-  };
+  story: WebStory;
   onClick: () => void;
 };
 

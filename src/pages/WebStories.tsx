@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { 
   ChevronLeft, 
@@ -12,9 +11,10 @@ import {
 import WebStoryCard from '../components/webstories/WebStoryCard';
 import WebStoryViewer from '../components/webstories/WebStoryViewer';
 import { cn } from '@/lib/utils';
+import { WebStory } from '@/types/webstories';
 
 // Sample data for web stories
-const webStoriesData = [
+const webStoriesData: WebStory[] = [
   {
     id: '1',
     title: 'Marketing Digital: 5 Tendências para 2024',
@@ -157,11 +157,10 @@ const webStoriesData = [
 ];
 
 const WebStories = () => {
-  const [selectedStory, setSelectedStory] = useState<typeof webStoriesData[0] | null>(null);
+  const [selectedStory, setSelectedStory] = useState<WebStory | null>(null);
   const [isVisible, setIsVisible] = useState(false);
   
   useEffect(() => {
-    // Animação para entrada da página
     const timer = setTimeout(() => {
       setIsVisible(true);
     }, 100);
@@ -169,20 +168,19 @@ const WebStories = () => {
     return () => clearTimeout(timer);
   }, []);
   
-  const openStory = (story: typeof webStoriesData[0]) => {
+  const openStory = (story: WebStory) => {
     setSelectedStory(story);
-    document.body.style.overflow = 'hidden'; // Previne scroll quando a história está aberta
+    document.body.style.overflow = 'hidden';
   };
   
   const closeStory = () => {
     setSelectedStory(null);
-    document.body.style.overflow = 'auto'; // Restaura scroll quando a história é fechada
+    document.body.style.overflow = 'auto';
   };
   
   return (
     <div className="min-h-screen pt-24 pb-16">
       <div className="container-custom">
-        {/* Header */}
         <div className={cn(
           "max-w-3xl mx-auto text-center mb-10 md:mb-12 transition-all duration-700 transform",
           isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-12"
@@ -194,7 +192,6 @@ const WebStories = () => {
           </p>
         </div>
         
-        {/* WebStories Grid */}
         <div className={cn(
           "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 transition-all duration-700 delay-300 transform",
           isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-12"
@@ -209,7 +206,6 @@ const WebStories = () => {
         </div>
       </div>
       
-      {/* Web Story Viewer */}
       {selectedStory && (
         <WebStoryViewer
           story={selectedStory}
