@@ -1,85 +1,80 @@
 
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Search, X } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Search } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface SearchBarProps {
-  className?: string;
+  onSearch: (query: string) => void;
   placeholder?: string;
   fullWidth?: boolean;
-  onSearch?: (query: string) => void;
+  className?: string;
+  initialValue?: string;
 }
 
-const SearchBar: React.FC<SearchBarProps> = ({ 
-  className,
-  placeholder = "Procurar artigos...",
+const SearchBar: React.FC<SearchBarProps> = ({
+  onSearch,
+  placeholder = 'Pesquisar',
   fullWidth = false,
-  onSearch
+  className,
+  initialValue = ''
 }) => {
-  const [searchQuery, setSearchQuery] = useState('');
-  const navigate = useNavigate();
+  const [searchQuery, setSearchQuery] = useState(initialValue);
   
-  const handleSearch = (e: React.FormEvent) => {
+  // Update search query if initialValue changes (for instance when navigation)
+  useEffect(() => {
+    setSearchQuery(initialValue);
+  }, [initialValue]);
+  
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (searchQuery.trim()) {
-      if (onSearch) {
-        onSearch(searchQuery.trim());
-      } else {
-        navigate(`/blog?search=${encodeURIComponent(searchQuery.trim())}`);
-      }
-    }
-  };
-  
-  const clearSearch = () => {
-    setSearchQuery('');
+    onSearch(searchQuery.trim());
   };
   
   return (
-    <form
-      onSubmit={handleSearch}
+    <form 
+      onSubmit={handleSubmit}
       className={cn(
-        "relative flex items-center",
-        fullWidth ? "w-full" : "max-w-md",
+        'relative',
+        fullWidth && 'w-full',
         className
       )}
     >
-      <div className="relative w-full">
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-        
+      <div className="relative">
         <input
           type="text"
+          placeholder={placeholder}
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          placeholder={placeholder}
           className={cn(
-            "w-full bg-white dark:bg-gray-800 border border-border rounded-lg py-2 pl-10",
-            searchQuery ? "pr-10" : "pr-4",
-            "focus:outline-none focus:ring-2 focus:ring-conecte-500 focus:border-transparent transition-all duration-200"
+            'py-2 pl-10 pr-4 rounded-full border border-border bg-background focus:outline-none focus:ring-2 focus:ring-conecte-500/50 transition-all duration-200',
+            fullWidth ? 'w-full' : 'w-64 md:w-80'
           )}
-          aria-label="Campo de busca"
         />
+        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+          <Search className="h-4 w-4 text-muted-foreground" />
+        </div>
         
         {searchQuery && (
           <button
             type="button"
-            onClick={clearSearch}
-            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors duration-200"
-            aria-label="Limpar busca"
+            onClick={() => {
+              setSearchQuery('');
+              onSearch('');
+            }}
+            className="absolute inset-y-0 right-0 pr-3 flex items-center text-muted-foreground hover:text-foreground"
           >
-            <X className="h-4 w-4" />
+            <svg 
+              xmlns="http://www.w3.org/2000/svg" 
+              className="h-4 w-4" 
+              fill="none" 
+              viewBox="0 0 24 24" 
+              stroke="currentColor"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
           </button>
         )}
       </div>
-      
-      <button
-        type="submit"
-        className="hidden"
-        aria-label="Pesquisar"
-      >
-        Pesquisar
-      </button>
     </form>
   );
 };

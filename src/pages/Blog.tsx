@@ -1,10 +1,11 @@
 
 import { useState, useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate, Link } from 'react-router-dom';
 import ArticleCard from '../components/blog/ArticleCard';
 import SearchBar from '../components/shared/SearchBar';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { cn } from '@/lib/utils';
+import { toast } from "sonner";
 
 // Sample data
 const allArticles = [
@@ -113,6 +114,7 @@ const categories = [
 ];
 
 const Blog = () => {
+  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const categoryParam = searchParams.get('category');
   const searchQuery = searchParams.get('search');
@@ -122,7 +124,11 @@ const Blog = () => {
   const [selectedCategory, setSelectedCategory] = useState(categoryParam?.toLowerCase() || 'todos');
   const [isLoading, setIsLoading] = useState(true);
   
+  // Force a clean render when navigating to this page
   useEffect(() => {
+    document.title = 'Blog | Conecte-C';
+    window.scrollTo(0, 0);
+    
     const timer = setTimeout(() => {
       setIsLoading(false);
     }, 600);
@@ -130,6 +136,7 @@ const Blog = () => {
     return () => clearTimeout(timer);
   }, []);
   
+  // Apply filters based on URL parameters
   useEffect(() => {
     let filtered = [...allArticles];
     
@@ -162,23 +169,51 @@ const Blog = () => {
   const handleCategoryChange = (category: string) => {
     setSelectedCategory(category);
     
+    // Update URL with new category parameter
+    const newParams = new URLSearchParams(searchParams);
+    
     if (category === 'todos') {
-      searchParams.delete('category');
+      newParams.delete('category');
     } else {
-      searchParams.set('category', category);
+      newParams.set('category', category);
     }
     
-    setSearchParams(searchParams);
+    // Use navigate instead of setSearchParams to ensure full page refresh
+    navigate({ 
+      pathname: '/blog', 
+      search: newParams.toString() 
+    }, { replace: true });
+    
+    // Show category changed toast
+    if (category !== 'todos') {
+      toast.success(`Categoria alterada para ${category}`);
+    } else {
+      toast.success('Mostrando todas as categorias');
+    }
+    
+    // Reset page position
+    window.scrollTo(0, 0);
   };
   
   const handleSearch = (query: string) => {
+    // Update URL with search parameter
+    const newParams = new URLSearchParams(searchParams);
+    
     if (query) {
-      searchParams.set('search', query);
+      newParams.set('search', query);
+      toast.success(`Pesquisando por "${query}"`);
     } else {
-      searchParams.delete('search');
+      newParams.delete('search');
     }
     
-    setSearchParams(searchParams);
+    // Use navigate instead of setSearchParams
+    navigate({ 
+      pathname: '/blog', 
+      search: newParams.toString() 
+    }, { replace: true });
+    
+    // Reset page position
+    window.scrollTo(0, 0);
   };
   
   return (
@@ -197,6 +232,7 @@ const Blog = () => {
               fullWidth 
               placeholder="Pesquisar artigos..."
               onSearch={handleSearch}
+              initialValue={searchQuery || ''}
             />
           </div>
         </div>
@@ -262,6 +298,16 @@ const Blog = () => {
               <p className="text-muted-foreground">
                 Tente ajustar seus filtros ou termos de pesquisa.
               </p>
+              <button 
+                onClick={() => {
+                  navigate('/blog');
+                  setSelectedCategory('todos');
+                  toast.success('Filtros removidos');
+                }}
+                className="mt-4 px-4 py-2 bg-conecte-600 text-white rounded-md hover:bg-conecte-700 transition-colors"
+              >
+                Limpar filtros
+              </button>
             </div>
           )}
         </TabsContent>
@@ -288,6 +334,16 @@ const Blog = () => {
               <p className="text-muted-foreground">
                 Tente ajustar seus filtros ou termos de pesquisa.
               </p>
+              <button 
+                onClick={() => {
+                  navigate('/blog');
+                  setSelectedCategory('todos');
+                  toast.success('Filtros removidos');
+                }}
+                className="mt-4 px-4 py-2 bg-conecte-600 text-white rounded-md hover:bg-conecte-700 transition-colors"
+              >
+                Limpar filtros
+              </button>
             </div>
           )}
         </TabsContent>

@@ -1,5 +1,5 @@
 
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Clock, Calendar } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -24,6 +24,13 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
   className
 }) => {
   const isGrid = layout === 'grid';
+  const navigate = useNavigate();
+  
+  // Handle category click with navigation
+  const handleCategoryClick = (e: React.MouseEvent, category: string) => {
+    e.preventDefault();
+    navigate(`/blog?category=${category.toLowerCase()}`);
+  };
   
   return (
     <article 
@@ -52,12 +59,13 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
       {/* Content */}
       <div className="flex-1 p-5 flex flex-col">
         <div className="flex items-center space-x-3 text-sm mb-3">
-          <Link 
-            to={`/blog?category=${article.category.toLowerCase()}`}
+          <a 
+            href={`/blog?category=${article.category.toLowerCase()}`}
+            onClick={(e) => handleCategoryClick(e, article.category)}
             className="bg-conecte-100 dark:bg-conecte-900/50 text-conecte-800 dark:text-conecte-300 px-2.5 py-1 rounded-full hover:bg-conecte-200 dark:hover:bg-conecte-800/70 transition-colors duration-200"
           >
             {article.category}
-          </Link>
+          </a>
           <div className="flex items-center text-muted-foreground">
             <Calendar className="h-3.5 w-3.5 mr-1.5" />
             <span>{article.date}</span>

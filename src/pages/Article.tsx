@@ -1,6 +1,5 @@
-
 import { useState, useEffect, useRef } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import ShareButtons from '../components/blog/ShareButtons';
 import ReadingProgress from '../components/layout/ReadingProgress';
 import ArticleCard from '../components/blog/ArticleCard';
@@ -138,7 +137,92 @@ const articleData = {
   tags: ['marketing digital', 'estratégia', 'seo', 'redes sociais', 'conteúdo']
 };
 
-// Sample related articles
+// Sample all articles (including the article above)
+const allArticles = [
+  articleData,
+  {
+    id: '2',
+    title: 'Tendências tecnológicas para 2024',
+    excerpt: 'Um olhar aprofundado sobre as tendências de tecnologia que devem dominar o mercado no próximo ano.',
+    imageUrl: 'https://images.unsplash.com/photo-1581089778245-3ce67677f718?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
+    category: 'Tecnologia',
+    slug: 'tendencias-tecnologicas-para-2024',
+    date: '02/07/2023',
+    readTime: '7 min de leitura'
+  },
+  {
+    id: '3',
+    title: 'A importância do SEO para blogs e sites',
+    excerpt: 'Entenda por que o SEO é fundamental para o sucesso do seu blog ou site e como implementar as melhores práticas.',
+    imageUrl: 'https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2072&q=80',
+    category: 'SEO',
+    slug: 'importancia-seo-blogs-sites',
+    date: '28/06/2023',
+    readTime: '6 min de leitura'
+  },
+  {
+    id: '4',
+    title: 'Como utilizar o Google Analytics para melhorar sua estratégia',
+    excerpt: 'Aprenda a extrair insights valiosos do Google Analytics para otimizar sua estratégia de marketing digital.',
+    imageUrl: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
+    category: 'Analytics',
+    slug: 'como-utilizar-google-analytics-melhorar-estrategia',
+    date: '20/07/2023',
+    readTime: '9 min de leitura'
+  },
+  {
+    id: '5',
+    title: 'Guia completo para criação de conteúdo para redes sociais',
+    excerpt: 'Um guia passo a passo para criar conteúdo engajador para diferentes plataformas de redes sociais.',
+    imageUrl: 'https://images.unsplash.com/photo-1563986768609-322da13575f3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1970&q=80',
+    category: 'Redes Sociais',
+    slug: 'guia-completo-criacao-conteudo-redes-sociais',
+    date: '15/07/2023',
+    readTime: '11 min de leitura'
+  },
+  {
+    id: '6',
+    title: 'O impacto da inteligência artificial no marketing',
+    excerpt: 'Como a IA está revolucionando as estratégias de marketing e o que esperar para o futuro.',
+    imageUrl: 'https://images.unsplash.com/photo-1589254065878-42c9da997008?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
+    category: 'Tecnologia',
+    slug: 'impacto-inteligencia-artificial-marketing',
+    date: '10/07/2023',
+    readTime: '8 min de leitura'
+  },
+  {
+    id: '7',
+    title: 'Os melhores plugins WordPress para um blog de sucesso',
+    excerpt: 'Uma seleção dos plugins mais úteis para otimizar seu blog WordPress e melhorar a experiência do usuário.',
+    imageUrl: 'https://images.unsplash.com/photo-1614332287897-cdc485fa562d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
+    category: 'WordPress',
+    slug: 'melhores-plugins-wordpress-blog-sucesso',
+    date: '05/07/2023',
+    readTime: '7 min de leitura'
+  },
+  {
+    id: '8',
+    title: 'Como implementar uma estratégia de email marketing eficiente',
+    excerpt: 'Dicas práticas para criar campanhas de email marketing que geram resultados e fortalecem seu relacionamento com os clientes.',
+    imageUrl: 'https://images.unsplash.com/photo-1523479999049-8e9f09d7fad2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
+    category: 'Email Marketing',
+    slug: 'como-implementar-estrategia-email-marketing-eficiente',
+    date: '01/07/2023',
+    readTime: '10 min de leitura'
+  },
+  {
+    id: '9',
+    title: 'As melhores ferramentas gratuitas para marketing digital',
+    excerpt: 'Uma lista completa de ferramentas gratuitas que podem ajudar a impulsionar sua estratégia de marketing digital sem gastar muito.',
+    imageUrl: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
+    category: 'Ferramentas',
+    slug: 'melhores-ferramentas-gratuitas-marketing-digital',
+    date: '25/06/2023',
+    readTime: '8 min de leitura'
+  }
+];
+
+// Sample related articles 
 const relatedArticles = [
   {
     id: '4',
@@ -177,7 +261,8 @@ const Article = () => {
   const [article, setArticle] = useState(articleData);
   const [isLoading, setIsLoading] = useState(true);
   const articleContentRef = useRef<HTMLDivElement>(null);
-  
+  const navigate = useNavigate();
+
   useEffect(() => {
     // Simulate fetching article data
     const timer = setTimeout(() => {
@@ -185,6 +270,12 @@ const Article = () => {
       
       // In a real app, you would fetch the article by slug
       console.log(`Fetching article with slug: ${slug}`);
+      
+      // If article is found in allArticles by slug, use it
+      const foundArticle = allArticles.find(art => art.slug === slug);
+      if (foundArticle) {
+        setArticle(foundArticle as typeof articleData);
+      }
       
       // Scroll to top on article load
       window.scrollTo(0, 0);
@@ -209,6 +300,12 @@ const Article = () => {
       document.title = 'Conecte-C';
     };
   }, [isLoading, article]);
+  
+  // Handle navigation back safely
+  const handleNavigateBack = (e: React.MouseEvent) => {
+    e.preventDefault();
+    navigate(-1);
+  };
   
   if (isLoading) {
     return (
@@ -237,13 +334,14 @@ const Article = () => {
         <article className="container-custom">
           <div className="max-w-3xl mx-auto">
             {/* Back Link */}
-            <Link 
-              to="/blog" 
+            <a 
+              href="/blog" 
+              onClick={handleNavigateBack}
               className="inline-flex items-center text-muted-foreground hover:text-conecte-600 dark:hover:text-conecte-400 mb-6 transition-colors duration-200"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
               <span>Voltar para o blog</span>
-            </Link>
+            </a>
             
             {/* Article Header */}
             <header className="mb-8">

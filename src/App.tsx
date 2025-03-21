@@ -3,7 +3,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation, useNavigationType } from "react-router-dom";
 import { useRef, useEffect } from "react";
 import Navbar from "./components/layout/Navbar";
 import Footer from "./components/layout/Footer";
@@ -18,25 +18,37 @@ import TermsOfUse from "./pages/TermsOfUse";
 import WebStories from "./pages/WebStories";
 import NotFound from "./pages/NotFound";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+      retry: 1,
+      staleTime: 5 * 60 * 1000, // 5 minutes
+    },
+  },
+});
 
-// Componente para voltar ao topo da página ao mudar de rota
+// Component to scroll to top of page when navigating to a new route
 const ScrollToTop = () => {
   const { pathname } = useLocation();
+  const navigationType = useNavigationType();
 
   useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [pathname]);
+    // Only scroll to top if it's a PUSH navigation (not when going back)
+    if (navigationType === 'PUSH') {
+      window.scrollTo(0, 0);
+    }
+  }, [pathname, navigationType]);
 
   return null;
 };
 
-// Componente principal com ReadingProgress
+// Main app content with ReadingProgress
 const AppContent = () => {
   const mainRef = useRef<HTMLElement>(null);
   const { pathname } = useLocation();
   
-  // Determinar se deve mostrar a barra de progresso (apenas em páginas de artigo)
+  // Determine if progress bar should be shown (only on certain pages)
   const showReadingProgress = pathname.includes('/blog/') || 
                               pathname === '/about' || 
                               pathname === '/privacy-policy' || 
