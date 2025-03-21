@@ -1,75 +1,58 @@
 
 import { useState, useEffect } from 'react';
-import { useSearchParams, useNavigate } from 'react-router-dom';
-import { toast } from "sonner";
+import { useParams, useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 import ArticleCard from '../components/blog/ArticleCard';
 import SearchBar from '../components/shared/SearchBar';
-import CategoryList from '../components/blog/CategoryList';
 import BlogSidebar from '../components/blog/BlogSidebar';
+import { getPostsByCategory } from '../services/blogService';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 import { cn } from '@/lib/utils';
-import { allArticles, getPostsByCategory, searchPosts } from '../services/blogService';
 
-const Blog = () => {
+const BlogCategory = () => {
+  const { category } = useParams<{ category: string }>();
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-  const searchQuery = searchParams.get('search');
   
   const [activeTab, setActiveTab] = useState('grid');
-  const [filteredArticles, setFilteredArticles] = useState(allArticles);
-  const [selectedCategory, setSelectedCategory] = useState('todos');
+  const [articles, setArticles] = useState(getPostsByCategory(category || 'todos'));
   const [isLoading, setIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const postsPerPage = 9;
   
-  // Force a clean render when navigating to this page
   useEffect(() => {
-    document.title = 'Blog | Conecte-C';
+    if (!category) {
+      navigate('/blog');
+      return;
+    }
+    
+    document.title = `${category.charAt(0).toUpperCase() + category.slice(1)} | Blog | Conecte-C`;
     window.scrollTo(0, 0);
     
-    setIsLoading(true);
     // Simulate loading
+    setIsLoading(true);
     const timer = setTimeout(() => {
-      let results = allArticles;
-      
-      // Apply search filter if query exists
-      if (searchQuery) {
-        results = searchPosts(searchQuery);
-        if (results.length === 0) {
-          toast.error(`Nenhum resultado encontrado para "${searchQuery}"`);
-        } else {
-          toast.success(`${results.length} resultados encontrados para "${searchQuery}"`);
-        }
-      }
-      
-      setFilteredArticles(results);
+      const filteredArticles = getPostsByCategory(category);
+      setArticles(filteredArticles);
       setIsLoading(false);
+      
+      if (filteredArticles.length === 0) {
+        toast.error(`Nenhum artigo encontrado na categoria "${category}"`);
+      }
     }, 600);
     
     return () => clearTimeout(timer);
-  }, [searchQuery]);
+  }, [category, navigate]);
   
   // Pagination logic
   const indexOfLastPost = currentPage * postsPerPage;
   const indexOfFirstPost = indexOfLastPost - postsPerPage;
-  const currentPosts = filteredArticles.slice(indexOfFirstPost, indexOfLastPost);
-  const totalPages = Math.ceil(filteredArticles.length / postsPerPage);
-  
-  const handleCategoryChange = (category: string) => {
-    setSelectedCategory(category);
-    
-    // Navigate to category page for non-todos categories
-    if (category.toLowerCase() !== 'todos') {
-      navigate(`/blog/category/${category.toLowerCase()}`);
-    }
-  };
+  const currentPosts = articles.slice(indexOfFirstPost, indexOfLastPost);
+  const totalPages = Math.ceil(articles.length / postsPerPage);
   
   const handleSearch = (query: string) => {
     if (query) {
       navigate(`/blog?search=${query}`);
-    } else {
-      navigate('/blog');
     }
   };
   
@@ -83,9 +66,9 @@ const Blog = () => {
       <div className="container-custom">
         {/* Header */}
         <div className="max-w-3xl mx-auto text-center mb-10 md:mb-12">
-          <h1 className="heading-xl mb-4">Blog</h1>
+          <h1 className="heading-xl mb-4">Categoria: {category}</h1>
           <p className="text-xl text-muted-foreground">
-            Explore nossos artigos sobre tecnologia, marketing digital e estratégias para o mundo online.
+            Artigos relacionados à categoria {category}
           </p>
           
           {/* Search Bar */}
@@ -94,27 +77,17 @@ const Blog = () => {
               fullWidth 
               placeholder="Pesquisar artigos..."
               onSearch={handleSearch}
-              initialValue={searchQuery || ''}
             />
           </div>
         </div>
         
-        {/* Category Filter */}
-        <div className="mb-8">
-          <CategoryList 
-            currentCategory={selectedCategory} 
-            onCategorySelect={handleCategoryChange}
-          />
-        </div>
-        
-        {/* Content Grid with Sidebar */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           {/* Main Content */}
           <div className="lg:col-span-9">
             {/* Layout Toggle */}
             <div className="flex justify-between items-center mb-8">
               <p className="text-muted-foreground">
-                {filteredArticles.length} {filteredArticles.length === 1 ? 'artigo encontrado' : 'artigos encontrados'}
+                {articles.length} {articles.length === 1 ? 'artigo encontrado' : 'artigos encontrados'}
               </p>
               
               <Tabs value={activeTab} onValueChange={setActiveTab} className="w-auto">
@@ -150,17 +123,13 @@ const Blog = () => {
                 <div className="text-center py-12">
                   <h3 className="text-xl font-semibold mb-2">Nenhum artigo encontrado</h3>
                   <p className="text-muted-foreground">
-                    Tente ajustar seus filtros ou termos de pesquisa.
+                    Tente outra categoria ou busca.
                   </p>
                   <button 
-                    onClick={() => {
-                      navigate('/blog');
-                      setSelectedCategory('todos');
-                      toast.success('Filtros removidos');
-                    }}
+                    onClick={() => navigate('/blog')}
                     className="mt-4 px-4 py-2 bg-conecte-600 text-white rounded-md hover:bg-conecte-700 transition-colors"
                   >
-                    Limpar filtros
+                    Ver todas as categorias
                   </button>
                 </div>
               )}
@@ -186,24 +155,20 @@ const Blog = () => {
                 <div className="text-center py-12">
                   <h3 className="text-xl font-semibold mb-2">Nenhum artigo encontrado</h3>
                   <p className="text-muted-foreground">
-                    Tente ajustar seus filtros ou termos de pesquisa.
+                    Tente outra categoria ou busca.
                   </p>
                   <button 
-                    onClick={() => {
-                      navigate('/blog');
-                      setSelectedCategory('todos');
-                      toast.success('Filtros removidos');
-                    }}
+                    onClick={() => navigate('/blog')}
                     className="mt-4 px-4 py-2 bg-conecte-600 text-white rounded-md hover:bg-conecte-700 transition-colors"
                   >
-                    Limpar filtros
+                    Ver todas as categorias
                   </button>
                 </div>
               )}
             </TabsContent>
             
             {/* Pagination */}
-            {filteredArticles.length > postsPerPage && (
+            {articles.length > postsPerPage && (
               <div className="mt-12">
                 <Pagination>
                   <PaginationContent>
@@ -239,7 +204,7 @@ const Blog = () => {
           
           {/* Sidebar */}
           <div className="lg:col-span-3">
-            <BlogSidebar />
+            <BlogSidebar currentCategory={category} />
           </div>
         </div>
       </div>
@@ -247,4 +212,4 @@ const Blog = () => {
   );
 };
 
-export default Blog;
+export default BlogCategory;

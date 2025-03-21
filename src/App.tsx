@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -11,6 +10,7 @@ import ReadingProgress from "./components/layout/ReadingProgress";
 import Index from "./pages/Index";
 import About from "./pages/About";
 import Blog from "./pages/Blog";
+import BlogCategory from "./pages/BlogCategory";
 import Article from "./pages/Article";
 import Contact from "./pages/Contact";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
@@ -28,13 +28,11 @@ const queryClient = new QueryClient({
   },
 });
 
-// Component to scroll to top of page when navigating to a new route
 const ScrollToTop = () => {
   const { pathname } = useLocation();
   const navigationType = useNavigationType();
 
   useEffect(() => {
-    // Only scroll to top if it's a PUSH navigation (not when going back)
     if (navigationType === 'PUSH') {
       window.scrollTo(0, 0);
     }
@@ -43,12 +41,10 @@ const ScrollToTop = () => {
   return null;
 };
 
-// Main app content with ReadingProgress
 const AppContent = () => {
   const mainRef = useRef<HTMLElement>(null);
   const { pathname } = useLocation();
   
-  // Determine if progress bar should be shown (only on certain pages)
   const showReadingProgress = pathname.includes('/blog/') || 
                               pathname === '/about' || 
                               pathname === '/privacy-policy' || 
@@ -63,6 +59,7 @@ const AppContent = () => {
           <Route path="/" element={<Index />} />
           <Route path="/about" element={<About />} />
           <Route path="/blog" element={<Blog />} />
+          <Route path="/blog/category/:category" element={<BlogCategory />} />
           <Route path="/blog/:slug" element={<Article />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
