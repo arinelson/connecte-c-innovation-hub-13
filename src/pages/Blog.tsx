@@ -1,15 +1,12 @@
-
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { toast } from "sonner";
-import ArticleCard from '../components/blog/ArticleCard';
 import SearchBar from '../components/shared/SearchBar';
 import CategoryList from '../components/blog/CategoryList';
-import BlogSidebar from '../components/blog/BlogSidebar';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 import { cn } from '@/lib/utils';
-import { allArticles, getPostsByCategory, searchPosts } from '../services/blogService';
+import { allArticles, searchPosts } from '../services/blogService';
+import ArticleList from '../components/blog/ArticleList';
 
 const Blog = () => {
   const navigate = useNavigate();
@@ -65,18 +62,24 @@ const Blog = () => {
     }
   };
   
-  const handleSearch = (query: string) => {
+  const handleSearch = useCallback((query: string) => {
     if (query) {
       navigate(`/blog?search=${query}`);
     } else {
       navigate('/blog');
     }
-  };
+  }, [navigate]);
   
   const handlePageChange = (pageNumber: number) => {
     setCurrentPage(pageNumber);
     window.scrollTo(0, 0);
   };
+
+  const handleClearFilters = useCallback(() => {
+    navigate('/blog');
+    setSelectedCategory('todos');
+    toast.success('Filtros removidos');
+  }, [navigate]);
   
   return (
     <div className="min-h-screen pt-24 pb-16">
@@ -111,96 +114,13 @@ const Blog = () => {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           {/* Main Content */}
           <div className="lg:col-span-9">
-            {/* Layout Toggle */}
-            <div className="flex justify-between items-center mb-8">
-              <p className="text-muted-foreground">
-                {filteredArticles.length} {filteredArticles.length === 1 ? 'artigo encontrado' : 'artigos encontrados'}
-              </p>
-              
-              <Tabs value={activeTab} onValueChange={setActiveTab} className="w-auto">
-                <TabsList className="bg-gray-100 dark:bg-gray-800">
-                  <TabsTrigger value="grid" className="data-[state=active]:bg-white dark:data-[state=active]:bg-gray-700">
-                    Grid
-                  </TabsTrigger>
-                  <TabsTrigger value="list" className="data-[state=active]:bg-white dark:data-[state=active]:bg-gray-700">
-                    Lista
-                  </TabsTrigger>
-                </TabsList>
-              </Tabs>
-            </div>
-            
-            {/* Articles Grid/List */}
-            <TabsContent value="grid" className="mt-0">
-              {isLoading ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {[...Array(6)].map((_, i) => (
-                    <div 
-                      key={i} 
-                      className="bg-gray-100 dark:bg-gray-800 animate-pulse rounded-xl h-80"
-                    />
-                  ))}
-                </div>
-              ) : currentPosts.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {currentPosts.map((article) => (
-                    <ArticleCard key={article.id} article={article} layout="grid" />
-                  ))}
-                </div>
-              ) : (
-                <div className="text-center py-12">
-                  <h3 className="text-xl font-semibold mb-2">Nenhum artigo encontrado</h3>
-                  <p className="text-muted-foreground">
-                    Tente ajustar seus filtros ou termos de pesquisa.
-                  </p>
-                  <button 
-                    onClick={() => {
-                      navigate('/blog');
-                      setSelectedCategory('todos');
-                      toast.success('Filtros removidos');
-                    }}
-                    className="mt-4 px-4 py-2 bg-conecte-600 text-white rounded-md hover:bg-conecte-700 transition-colors"
-                  >
-                    Limpar filtros
-                  </button>
-                </div>
-              )}
-            </TabsContent>
-            
-            <TabsContent value="list" className="mt-0">
-              {isLoading ? (
-                <div className="space-y-6">
-                  {[...Array(4)].map((_, i) => (
-                    <div 
-                      key={i} 
-                      className="bg-gray-100 dark:bg-gray-800 animate-pulse rounded-xl h-48"
-                    />
-                  ))}
-                </div>
-              ) : currentPosts.length > 0 ? (
-                <div className="space-y-6">
-                  {currentPosts.map((article) => (
-                    <ArticleCard key={article.id} article={article} layout="list" />
-                  ))}
-                </div>
-              ) : (
-                <div className="text-center py-12">
-                  <h3 className="text-xl font-semibold mb-2">Nenhum artigo encontrado</h3>
-                  <p className="text-muted-foreground">
-                    Tente ajustar seus filtros ou termos de pesquisa.
-                  </p>
-                  <button 
-                    onClick={() => {
-                      navigate('/blog');
-                      setSelectedCategory('todos');
-                      toast.success('Filtros removidos');
-                    }}
-                    className="mt-4 px-4 py-2 bg-conecte-600 text-white rounded-md hover:bg-conecte-700 transition-colors"
-                  >
-                    Limpar filtros
-                  </button>
-                </div>
-              )}
-            </TabsContent>
+            <ArticleList 
+              articles={currentPosts}
+              isLoading={isLoading}
+              activeTab={activeTab}
+              setActiveTab={setActiveTab}
+              onClearFilters={handleClearFilters}
+            />
             
             {/* Pagination */}
             {filteredArticles.length > postsPerPage && (
