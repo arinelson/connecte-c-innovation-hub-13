@@ -10,6 +10,7 @@ import {
   ExternalLink 
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import ShareButtons from '../blog/ShareButtons';
 
 type Slide = {
   id: string;
@@ -35,6 +36,7 @@ const WebStoryViewer = ({ story, onClose }: WebStoryViewerProps) => {
   const [progress, setProgress] = useState(0);
   const [isMuted, setIsMuted] = useState(true);
   const [isPlaying, setIsPlaying] = useState(true);
+  const [showShareOptions, setShowShareOptions] = useState(false);
   const maxDuration = 7000; // 7 seconds per slide
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   
@@ -132,16 +134,13 @@ const WebStoryViewer = ({ story, onClose }: WebStoryViewerProps) => {
     setIsMuted(!isMuted);
   };
   
-  // Share functionality
-  const handleShare = () => {
-    if (navigator.share) {
-      navigator.share({
-        title: story.title,
-        text: currentSlide.title,
-        url: window.location.href,
-      }).catch((error) => console.log('Erro ao compartilhar:', error));
-    } else {
-      alert('Compartilhamento não suportado neste navegador');
+  // Toggle share options
+  const toggleShareOptions = () => {
+    setShowShareOptions(!showShareOptions);
+    
+    // Pause the story when showing share options
+    if (!showShareOptions) {
+      setIsPlaying(false);
     }
   };
   
@@ -215,7 +214,7 @@ const WebStoryViewer = ({ story, onClose }: WebStoryViewerProps) => {
           {/* Right Controls */}
           <div className="flex items-center space-x-4">
             <button 
-              onClick={handleShare}
+              onClick={toggleShareOptions}
               className="w-10 h-10 bg-black/50 rounded-full flex items-center justify-center text-white"
             >
               <Share2 className="h-5 w-5" />
@@ -230,6 +229,25 @@ const WebStoryViewer = ({ story, onClose }: WebStoryViewerProps) => {
             </a>
           </div>
         </div>
+        
+        {/* Share Options Panel */}
+        {showShareOptions && (
+          <div className="absolute inset-x-0 bottom-20 bg-black/80 rounded-t-xl p-4 z-20 backdrop-blur-sm">
+            <div className="flex flex-col items-center">
+              <h3 className="text-white text-lg font-medium mb-4">Compartilhar</h3>
+              <ShareButtons 
+                url={window.location.href} 
+                title={story.title}
+              />
+              <button 
+                className="mt-4 text-white/70 text-sm"
+                onClick={toggleShareOptions}
+              >
+                Fechar
+              </button>
+            </div>
+          </div>
+        )}
         
         {/* Navigation Arrows */}
         {currentSlideIndex > 0 && (
