@@ -15,6 +15,7 @@ import Article from "./pages/Article";
 import Contact from "./pages/Contact";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsOfUse from "./pages/TermsOfUse";
+import WebStories from "./pages/WebStories";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -54,6 +55,7 @@ const AppContent = () => {
           <Route path="/contact" element={<Contact />} />
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/terms-of-use" element={<TermsOfUse />} />
+          <Route path="/webstories" element={<WebStories />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
