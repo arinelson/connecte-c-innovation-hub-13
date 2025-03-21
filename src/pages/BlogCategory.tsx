@@ -3,6 +3,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import SearchBar from '../components/shared/SearchBar';
+import BlogSidebar from '../components/blog/BlogSidebar';
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 import { cn } from '@/lib/utils';
 import { getPostsByCategory } from '../services/blogService';

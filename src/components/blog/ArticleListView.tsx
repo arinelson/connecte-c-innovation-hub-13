@@ -2,10 +2,10 @@
 import { memo } from 'react';
 import ArticleCard from './ArticleCard';
 import NoArticlesFound from './NoArticlesFound';
-import { BlogArticle } from '../../services/blogService';
+import { BlogPost } from '../../services/blogService';
 
 interface ArticleListViewProps {
-  articles: BlogArticle[];
+  articles: BlogPost[];
   isLoading: boolean;
   onClearFilters?: () => void;
   isCategoryPage?: boolean;

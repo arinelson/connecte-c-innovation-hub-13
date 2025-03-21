@@ -3,10 +3,10 @@ import { memo } from 'react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import ArticleGrid from './ArticleGrid';
 import ArticleListView from './ArticleListView';
-import { BlogArticle } from '../../services/blogService';
+import { BlogPost } from '../../services/blogService';
 
 interface ArticleListProps {
-  articles: BlogArticle[];
+  articles: BlogPost[];
   isLoading: boolean;
   activeTab: string;
   setActiveTab: (value: string) => void;

@@ -13,8 +13,6 @@ const BlogLayout = ({ children, sidebarProps = {} }: BlogLayoutProps) => {
   return (
     <div className="min-h-screen pt-24 pb-16">
       <div className="container-custom">
-        {children}
-        
         {/* Content Grid with Sidebar */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           {/* Main Content */}

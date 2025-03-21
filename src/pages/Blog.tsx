@@ -1,8 +1,10 @@
+
 import { useState, useEffect, useCallback } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { toast } from "sonner";
 import SearchBar from '../components/shared/SearchBar';
 import CategoryList from '../components/blog/CategoryList';
+import BlogSidebar from '../components/blog/BlogSidebar';
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 import { cn } from '@/lib/utils';
 import { allArticles, searchPosts } from '../services/blogService';
