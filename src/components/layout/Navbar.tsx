@@ -16,17 +16,24 @@ const Navbar = () => {
       setIsScrolled(scrollPosition > 10);
     };
 
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
   }, []);
 
+  // Close mobile menu when route changes
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      setIsMobileMenuOpen(false);
+    }
+  }, [window.location.pathname]);
+
   return (
     <header className={cn(
       "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
-      isScrolled ? "bg-background/80 backdrop-blur-md shadow-sm" : "bg-transparent"
+      isScrolled ? "bg-background/95 backdrop-blur-md shadow-sm" : "bg-transparent"
     )}>
       <div className="container-custom py-4">
         <div className="flex items-center justify-between">
@@ -101,68 +108,67 @@ const Navbar = () => {
       </div>
 
       {/* Mobile Menu */}
-      <div className={cn(
-        "fixed inset-0 top-[72px] bg-background dark:bg-background z-40 transform transition-transform duration-300 ease-in-out",
-        isMobileMenuOpen ? "translate-x-0" : "translate-x-full"
-      )}>
-        <div className="container-custom py-8 flex flex-col space-y-6">
-          <nav className="flex flex-col space-y-6">
-            <NavLink 
-              to="/" 
-              className={({ isActive }) => cn(
-                "text-xl py-2 border-b border-border",
-                isActive ? "text-conecte-600 dark:text-conecte-400" : ""
-              )}
-              onClick={() => setIsMobileMenuOpen(false)}
-              end
-            >
-              Home
-            </NavLink>
-            <NavLink 
-              to="/blog" 
-              className={({ isActive }) => cn(
-                "text-xl py-2 border-b border-border",
-                isActive ? "text-conecte-600 dark:text-conecte-400" : ""
-              )}
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              Blog
-            </NavLink>
-            <NavLink 
-              to="/about" 
-              className={({ isActive }) => cn(
-                "text-xl py-2 border-b border-border",
-                isActive ? "text-conecte-600 dark:text-conecte-400" : ""
-              )}
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              Sobre
-            </NavLink>
-            <NavLink 
-              to="/contact" 
-              className={({ isActive }) => cn(
-                "text-xl py-2 border-b border-border",
-                isActive ? "text-conecte-600 dark:text-conecte-400" : ""
-              )}
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              Contato
-            </NavLink>
-          </nav>
-          <div className="py-4">
-            <button 
-              onClick={() => {
-                setIsSearchOpen(prev => !prev);
-                setIsMobileMenuOpen(false);
-              }}
-              className="flex items-center space-x-2 text-xl py-2"
-            >
-              <Search className="h-5 w-5" />
-              <span>Pesquisar</span>
-            </button>
+      {isMobileMenuOpen && (
+        <div className="fixed inset-0 top-[72px] bg-background/95 dark:bg-background/95 backdrop-blur-md z-40 md:hidden overflow-y-auto">
+          <div className="container-custom py-8 flex flex-col space-y-6">
+            <nav className="flex flex-col space-y-6">
+              <NavLink 
+                to="/" 
+                className={({ isActive }) => cn(
+                  "text-xl py-2 border-b border-border",
+                  isActive ? "text-conecte-600 dark:text-conecte-400" : ""
+                )}
+                onClick={() => setIsMobileMenuOpen(false)}
+                end
+              >
+                Home
+              </NavLink>
+              <NavLink 
+                to="/blog" 
+                className={({ isActive }) => cn(
+                  "text-xl py-2 border-b border-border",
+                  isActive ? "text-conecte-600 dark:text-conecte-400" : ""
+                )}
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Blog
+              </NavLink>
+              <NavLink 
+                to="/about" 
+                className={({ isActive }) => cn(
+                  "text-xl py-2 border-b border-border",
+                  isActive ? "text-conecte-600 dark:text-conecte-400" : ""
+                )}
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Sobre
+              </NavLink>
+              <NavLink 
+                to="/contact" 
+                className={({ isActive }) => cn(
+                  "text-xl py-2 border-b border-border",
+                  isActive ? "text-conecte-600 dark:text-conecte-400" : ""
+                )}
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Contato
+              </NavLink>
+            </nav>
+            <div className="py-4">
+              <button 
+                onClick={() => {
+                  setIsSearchOpen(prev => !prev);
+                  setIsMobileMenuOpen(false);
+                }}
+                className="flex items-center space-x-2 text-xl py-2"
+              >
+                <Search className="h-5 w-5" />
+                <span>Pesquisar</span>
+              </button>
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </header>
   );
 };

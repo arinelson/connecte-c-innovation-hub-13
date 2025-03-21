@@ -17,6 +17,8 @@ const ReadingProgress: React.FC<ReadingProgressProps> = ({
   const [readingProgress, setReadingProgress] = useState(0);
   
   const updateReadingProgress = useCallback(() => {
+    if (!document) return;
+    
     const element = target?.current || document.documentElement;
     
     if (!element) return;
@@ -25,8 +27,8 @@ const ReadingProgress: React.FC<ReadingProgressProps> = ({
     const totalHeight = element.scrollHeight - element.clientHeight;
     if (totalHeight <= 0) return;
     
-    const currentProgress = Math.min(element.scrollTop / totalHeight, 1);
-    setReadingProgress(currentProgress * 100);
+    const currentProgress = window.scrollY / totalHeight;
+    setReadingProgress(Math.min(currentProgress * 100, 100));
   }, [target]);
   
   useEffect(() => {
@@ -34,11 +36,11 @@ const ReadingProgress: React.FC<ReadingProgressProps> = ({
     updateReadingProgress();
     
     // Add scroll event listener with passive flag for better performance
-    document.addEventListener('scroll', updateReadingProgress, { passive: true });
+    window.addEventListener('scroll', updateReadingProgress, { passive: true });
     
     // Clean up
     return () => {
-      document.removeEventListener('scroll', updateReadingProgress);
+      window.removeEventListener('scroll', updateReadingProgress);
     };
   }, [updateReadingProgress]);
   

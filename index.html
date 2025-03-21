@@ -9,10 +9,19 @@
     <meta name="author" content="Conecte-C" />
     <meta property="og:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
     <meta name="theme-color" content="#0079cc" />
+    
+    <!-- Preconexões para acelerar carregamento -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
+    <!-- Carregamento otimizado de fontes -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="preload" as="image" href="https://images.unsplash.com/photo-1499951360447-b19be8fe80f5?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80">
+    
+    <!-- Preload de imagens críticas -->
+    <link rel="preload" as="image" href="https://images.unsplash.com/photo-1499951360447-b19be8fe80f5?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" fetchpriority="high">
+    
+    <!-- Preload de JavaScript crítico -->
+    <link rel="modulepreload" href="/src/main.tsx">
   </head>
 
   <body>
