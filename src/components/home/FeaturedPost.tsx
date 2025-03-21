@@ -40,11 +40,14 @@ const FeaturedPost: React.FC<FeaturedPostProps> = ({
         src={post.imageUrl} 
         alt={post.title}
         className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+        loading={isPrimary ? "eager" : "lazy"}
+        width="800"
+        height={isPrimary ? "400" : "600"}
       />
       
       <div className="absolute bottom-0 left-0 right-0 p-4 md:p-6 z-20">
         <div className="space-y-2">
-          <div className="flex items-center space-x-3 text-sm">
+          <div className="flex flex-wrap items-center gap-3 text-sm">
             <span className="bg-conecte-600/90 text-white px-2.5 py-1 rounded-full">
               {post.category}
             </span>
@@ -60,7 +63,7 @@ const FeaturedPost: React.FC<FeaturedPostProps> = ({
           
           <h3 className={cn(
             "font-bold text-white group-hover:text-conecte-200 transition-colors duration-200",
-            isPrimary ? "text-2xl md:text-3xl" : "text-xl"
+            isPrimary ? "text-xl md:text-2xl lg:text-3xl" : "text-lg md:text-xl"
           )}>
             {post.title}
           </h3>

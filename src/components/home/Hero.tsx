@@ -22,13 +22,13 @@ const Hero = () => {
       <div className="absolute inset-0 bg-gradient-to-br from-conecte-50/30 via-transparent to-conecte-100/20 dark:from-conecte-950/30 dark:to-conecte-900/10 z-0" />
       
       {/* Background Pattern */}
-      <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiMxNDI1MzgiIGZpbGwtb3BhY2l0eT0iMC4wNCIgZmlsbC1ydWxlPSJub256ZXJvIj48cGF0aCBkPSJNMjkgNThsMjktMjl2MjlaIi8+PHBhdGggZD0iTTAgMGgyOXYyOXoiLz48L2c+PC9nPjwvc3ZnPg==')] opacity-30 dark:opacity-10 z-0" />
+      <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiMxNDI1MzgiIGZpbGwtb3BhY2l0eT0iMC4wNCIgZmlsbC1ydWxlPSJub256ZXJvIj48cGF0aCBkPSJNMjkgNThsMjktMjl2MjlaIi8+PHBhdGggZD0iTTAgMGgyOXYyOXoiLz48L2c+PC9nPjwvc3ZnPg==')]  opacity-30 dark:opacity-10 z-0" aria-hidden="true" />
       
       <div className="container-custom relative z-10 md:pt-12 pb-20 md:pb-32">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 md:gap-16 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-12 items-center">
           {/* Text Content */}
           <div className={cn(
-            "lg:col-span-7 space-y-6 md:space-y-8 transition-all duration-700 transform",
+            "lg:col-span-7 space-y-5 md:space-y-6 transition-all duration-700 transform",
             isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-12"
           )}>
             <div className="inline-block">
@@ -42,7 +42,7 @@ const Hero = () => {
               para tecnologia e marketing digital
             </h1>
             
-            <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl">
+            <p className="text-lg md:text-xl text-muted-foreground max-w-2xl leading-relaxed">
               Descubra as últimas tendências, estratégias e insights para impulsionar 
               sua presença digital e se manter atualizado no mundo da tecnologia.
             </p>
@@ -75,15 +75,18 @@ const Hero = () => {
               {/* Main Image */}
               <div className="relative overflow-hidden rounded-xl bg-white shadow-xl dark:bg-gray-800 border border-white/10 dark:border-gray-700/50">
                 <img 
-                  src="https://images.unsplash.com/photo-1499951360447-b19be8fe80f5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" 
-                  alt="Marketing Digital"
+                  src="https://images.unsplash.com/photo-1499951360447-b19be8fe80f5?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" 
+                  alt="Marketing Digital e Tecnologia"
                   className="w-full h-auto rounded-xl"
+                  width="800"
+                  height="600"
+                  loading="eager"
                 />
               </div>
               
               {/* Decorative Elements */}
-              <div className="absolute -bottom-6 -left-6 w-24 h-24 bg-conecte-100 dark:bg-conecte-900/50 rounded-xl -z-10"></div>
-              <div className="absolute -top-6 -right-6 w-24 h-24 bg-conecte-200 dark:bg-conecte-800/50 rounded-xl -z-10"></div>
+              <div className="absolute -bottom-6 -left-6 w-24 h-24 bg-conecte-100 dark:bg-conecte-900/50 rounded-xl -z-10" aria-hidden="true"></div>
+              <div className="absolute -top-6 -right-6 w-24 h-24 bg-conecte-200 dark:bg-conecte-800/50 rounded-xl -z-10" aria-hidden="true"></div>
             </div>
           </div>
         </div>

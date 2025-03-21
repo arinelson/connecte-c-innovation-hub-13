@@ -18,12 +18,12 @@ interface CategorySectionProps {
 
 const CategorySection: React.FC<CategorySectionProps> = ({ categories, className }) => {
   return (
-    <div className={cn("py-12 md:py-16", className)}>
+    <section className={cn("py-16 md:py-20 bg-gray-50/50 dark:bg-gray-900/50", className)}>
       <div className="container-custom">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 md:mb-12">
           <div>
             <h2 className="heading-lg">Categorias</h2>
-            <p className="text-muted-foreground mt-2 max-w-2xl">
+            <p className="text-muted-foreground mt-2 max-w-2xl leading-relaxed">
               Explore nossos conteúdos por tópicos específicos e encontre as informações que você busca.
             </p>
           </div>
@@ -41,6 +41,9 @@ const CategorySection: React.FC<CategorySectionProps> = ({ categories, className
                   src={category.imageUrl} 
                   alt={category.name}
                   className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                  loading="lazy"
+                  width="400"
+                  height="300"
                 />
               </div>
               
@@ -49,7 +52,7 @@ const CategorySection: React.FC<CategorySectionProps> = ({ categories, className
                   {category.name}
                 </h3>
                 
-                <p className="text-muted-foreground mt-2 line-clamp-2">
+                <p className="text-muted-foreground mt-2 line-clamp-2 leading-relaxed">
                   {category.description}
                 </p>
                 
@@ -62,7 +65,7 @@ const CategorySection: React.FC<CategorySectionProps> = ({ categories, className
           ))}
         </div>
       </div>
-    </div>
+    </section>
   );
 };
 

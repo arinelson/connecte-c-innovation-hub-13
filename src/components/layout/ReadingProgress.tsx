@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 interface ReadingProgressProps {
   target?: React.RefObject<HTMLElement>;
@@ -16,29 +16,31 @@ const ReadingProgress: React.FC<ReadingProgressProps> = ({
 }) => {
   const [readingProgress, setReadingProgress] = useState(0);
   
-  useEffect(() => {
+  const updateReadingProgress = useCallback(() => {
     const element = target?.current || document.documentElement;
     
-    const updateReadingProgress = () => {
-      if (!element) return;
-      
-      // Calculate how much the user has scrolled based on element height
-      const totalHeight = element.scrollHeight - element.clientHeight;
-      const currentProgress = element.scrollTop / totalHeight;
-      setReadingProgress(currentProgress * 100);
-    };
+    if (!element) return;
     
+    // Calculate how much the user has scrolled based on element height
+    const totalHeight = element.scrollHeight - element.clientHeight;
+    if (totalHeight <= 0) return;
+    
+    const currentProgress = Math.min(element.scrollTop / totalHeight, 1);
+    setReadingProgress(currentProgress * 100);
+  }, [target]);
+  
+  useEffect(() => {
     // Update on mount
     updateReadingProgress();
     
-    // Add scroll event listener
+    // Add scroll event listener with passive flag for better performance
     document.addEventListener('scroll', updateReadingProgress, { passive: true });
     
     // Clean up
     return () => {
       document.removeEventListener('scroll', updateReadingProgress);
     };
-  }, [target]);
+  }, [updateReadingProgress]);
   
   return (
     <div 
@@ -48,6 +50,7 @@ const ReadingProgress: React.FC<ReadingProgressProps> = ({
       <div 
         className={`h-full ${color}`}
         style={{ width: `${readingProgress}%`, transition: 'width 0.2s ease' }}
+        aria-hidden="true"
       />
     </div>
   );
