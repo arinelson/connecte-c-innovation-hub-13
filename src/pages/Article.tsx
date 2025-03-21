@@ -1,10 +1,14 @@
 import { useState, useEffect, useRef } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
-import ShareButtons from '../components/blog/ShareButtons';
+import { useParams, useNavigate } from 'react-router-dom';
+import ArticleHeader from '../components/blog/ArticleHeader';
+import ArticleContent from '../components/blog/ArticleContent';
+import ArticleAuthorBox from '../components/blog/ArticleAuthorBox';
+import RelatedArticles from '../components/blog/RelatedArticles';
+import ArticleNewsletter from '../components/blog/ArticleNewsletter';
+import ArticleSkeleton from '../components/blog/ArticleSkeleton';
+import MobileShareButton from '../components/blog/MobileShareButton';
 import ReadingProgress from '../components/layout/ReadingProgress';
-import ArticleCard from '../components/blog/ArticleCard';
-import { ArrowLeft, Calendar, Clock, User } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import BlogLayout from '../components/blog/BlogLayout';
 
 // Sample article data
 const articleData = {
@@ -308,206 +312,49 @@ const Article = () => {
   };
   
   if (isLoading) {
-    return (
-      <div className="min-h-screen pt-24 pb-16">
-        <div className="container-custom">
-          <div className="max-w-3xl mx-auto">
-            <div className="w-full h-64 bg-gray-200 dark:bg-gray-800 rounded-xl animate-pulse mb-8" />
-            <div className="w-3/4 h-10 bg-gray-200 dark:bg-gray-800 rounded animate-pulse mb-4" />
-            <div className="w-1/2 h-6 bg-gray-200 dark:bg-gray-800 rounded animate-pulse mb-8" />
-            <div className="space-y-4">
-              {[...Array(8)].map((_, i) => (
-                <div key={i} className="w-full h-4 bg-gray-200 dark:bg-gray-800 rounded animate-pulse" />
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-    );
+    return <ArticleSkeleton />;
   }
   
   return (
-    <>
+    <article className="min-h-screen pt-24 pb-16" ref={articleContentRef}>
       <ReadingProgress target={articleContentRef} />
       
-      <div className="min-h-screen pt-24 pb-16" ref={articleContentRef}>
-        <article className="container-custom">
-          <div className="max-w-3xl mx-auto">
-            {/* Back Link */}
-            <a 
-              href="/blog" 
-              onClick={handleNavigateBack}
-              className="inline-flex items-center text-muted-foreground hover:text-conecte-600 dark:hover:text-conecte-400 mb-6 transition-colors duration-200"
-            >
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              <span>Voltar para o blog</span>
-            </a>
-            
-            {/* Article Header */}
-            <header className="mb-8">
-              <div className="space-y-3">
-                <Link 
-                  to={`/blog?category=${article.category.toLowerCase()}`}
-                  className="inline-block bg-conecte-100 dark:bg-conecte-900/50 text-conecte-800 dark:text-conecte-300 px-3 py-1 rounded-full text-sm font-medium"
-                >
-                  {article.category}
-                </Link>
-                
-                <h1 className="heading-xl">
-                  {article.title}
-                </h1>
-                
-                <p className="text-xl text-muted-foreground">
-                  {article.excerpt}
-                </p>
-              </div>
-              
-              <div className="flex flex-col sm:flex-row justify-between sm:items-center mt-6 pt-6 border-t border-border">
-                {/* Author Info */}
-                <div className="flex items-center mb-4 sm:mb-0">
-                  <img 
-                    src={article.author.avatar} 
-                    alt={article.author.name}
-                    className="w-12 h-12 rounded-full object-cover mr-4"
-                  />
-                  <div>
-                    <div className="font-semibold">{article.author.name}</div>
-                    <div className="text-sm text-muted-foreground">{article.author.role}</div>
-                  </div>
-                </div>
-                
-                {/* Article Meta */}
-                <div className="flex items-center space-x-4 text-sm text-muted-foreground">
-                  <div className="flex items-center">
-                    <Calendar className="h-4 w-4 mr-1.5" />
-                    <span>{article.date}</span>
-                  </div>
-                  <div className="flex items-center">
-                    <Clock className="h-4 w-4 mr-1.5" />
-                    <span>{article.readTime}</span>
-                  </div>
-                </div>
-              </div>
-            </header>
-            
-            {/* Featured Image */}
-            <div className="mb-8 rounded-xl overflow-hidden">
-              <img 
-                src={article.imageUrl} 
-                alt={article.title}
-                className="w-full h-auto"
-              />
-            </div>
-            
-            {/* Article Content */}
-            <div 
-              className={cn(
-                "prose dark:prose-invert prose-lg max-w-none",
-                "prose-headings:font-bold prose-headings:text-foreground",
-                "prose-p:text-muted-foreground prose-p:leading-relaxed",
-                "prose-a:text-conecte-600 dark:prose-a:text-conecte-400 prose-a:no-underline hover:prose-a:underline",
-                "prose-strong:text-foreground",
-                "prose-ul:text-muted-foreground prose-ol:text-muted-foreground",
-                "mb-12"
-              )}
-              dangerouslySetInnerHTML={{ __html: article.content }}
-            />
-            
-            {/* Tags */}
-            <div className="mb-8">
-              <div className="text-sm font-semibold mb-3">Tags:</div>
-              <div className="flex flex-wrap gap-2">
-                {article.tags.map(tag => (
-                  <Link 
-                    key={tag}
-                    to={`/blog?search=${tag}`}
-                    className="bg-gray-100 dark:bg-gray-800 text-muted-foreground px-3 py-1 rounded-full text-sm hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-200"
-                  >
-                    {tag}
-                  </Link>
-                ))}
-              </div>
-            </div>
-            
-            {/* Share Buttons */}
-            <div className="mb-12 border-t border-b border-border py-6">
-              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                <div className="flex items-center">
-                  <div className="mr-4">
-                    <img 
-                      src={article.author.avatar} 
-                      alt={article.author.name}
-                      className="w-10 h-10 rounded-full object-cover"
-                    />
-                  </div>
-                  <div>
-                    <div className="text-sm text-muted-foreground">Escrito por</div>
-                    <div className="font-semibold">{article.author.name}</div>
-                  </div>
-                </div>
-                
-                <ShareButtons 
-                  url={window.location.href} 
-                  title={article.title}
-                />
-              </div>
-            </div>
-          </div>
-          
-          {/* Related Articles */}
-          <div className="max-w-5xl mx-auto mt-16">
-            <h2 className="heading-lg mb-8 text-center">Artigos Relacionados</h2>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {relatedArticles.map((relatedArticle) => (
-                <ArticleCard key={relatedArticle.id} article={relatedArticle} />
-              ))}
-            </div>
-          </div>
-          
-          {/* Newsletter */}
-          <div className="max-w-3xl mx-auto mt-16 bg-conecte-50 dark:bg-conecte-900/20 rounded-xl p-8 border border-border">
-            <div className="text-center">
-              <h3 className="text-2xl font-bold mb-3">Inscreva-se na nossa newsletter</h3>
-              <p className="text-muted-foreground mb-6">
-                Receba em primeira mão nossos melhores artigos e dicas sobre marketing digital e tecnologia.
-              </p>
-              
-              <form className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
-                <input 
-                  type="email" 
-                  placeholder="Seu email" 
-                  className="flex-1 px-4 py-2 rounded-lg border border-border bg-white dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-conecte-500 transition-all duration-200"
-                  aria-label="Email para newsletter"
-                  required
-                />
-                <button 
-                  type="submit" 
-                  className="px-6 py-2 bg-conecte-600 text-white font-medium rounded-lg hover:bg-conecte-700 transition-colors duration-200"
-                >
-                  Inscrever-se
-                </button>
-              </form>
-              
-              <p className="text-muted-foreground text-sm mt-4">
-                Prometemos não enviar spam. Você pode cancelar a inscrição a qualquer momento.
-              </p>
-            </div>
-          </div>
-        </article>
-      </div>
-      
-      {/* Mobile Share Floating Button */}
-      <div className="fixed bottom-6 right-6 md:hidden z-40">
-        <div className="bg-white dark:bg-gray-800 rounded-full shadow-lg p-2 border border-border">
-          <ShareButtons 
-            url={window.location.href} 
+      <div className="container-custom">
+        <div className="max-w-3xl mx-auto">
+          <ArticleHeader
             title={article.title}
-            vertical
+            excerpt={article.excerpt}
+            category={article.category}
+            date={article.date}
+            readTime={article.readTime}
+            author={article.author}
+            handleNavigateBack={handleNavigateBack}
+          />
+          
+          <ArticleContent
+            content={article.content}
+            imageUrl={article.imageUrl}
+            title={article.title}
+            tags={article.tags}
+          />
+          
+          <ArticleAuthorBox
+            author={article.author}
+            url={window.location.href}
+            title={article.title}
           />
         </div>
+        
+        <RelatedArticles articles={relatedArticles} />
+        
+        <ArticleNewsletter />
       </div>
-    </>
+      
+      <MobileShareButton 
+        url={window.location.href} 
+        title={article.title} 
+      />
+    </article>
   );
 };
 
